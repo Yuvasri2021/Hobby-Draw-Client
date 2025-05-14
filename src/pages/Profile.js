@@ -78,7 +78,12 @@ export default function Profile() {
   };
 
   if (loading) return <div className="loading">⏳ Loading profile...</div>;
-  if (error) return <div className="error">{error}</div>;
+  if (error) return (
+    <div className="profile-container">
+      <style>{profileStyles}</style>
+      <div className="error">{error}</div>
+    </div>
+  );
   if (!user) return null;
 
   return (
@@ -195,10 +200,31 @@ const profileStyles = `
   text-align: center;
 }
 
+/* Enhanced Error Styling */
 .error {
   font-size: 18px;
   color: #ff6b81;
   font-weight: bold;
   text-align: center;
+  margin: 20px auto;
+  padding: 15px 25px;
+  background-color: #2f2f2f;
+  border: 2px solid #ff6b81;
+  border-radius: 12px;
+  width: fit-content;
+  max-width: 80%;
+  box-shadow: 0 0 15px rgba(255, 107, 129, 0.4);
+  animation: fadeInPop 0.4s ease-out;
+}
+
+@keyframes fadeInPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 `;
