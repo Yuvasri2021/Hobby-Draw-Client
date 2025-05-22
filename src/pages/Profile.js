@@ -19,25 +19,27 @@ export default function Profile() {
       }
 
       try {
+        console.log('📦 Using token:', token);
         const res = await axios.get('http://localhost:5000/api/auth/profile', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!res.data.user) {
-          setError('Profile not found.');
-        } else {
-          const userData = res.data.user;
-          setUser(userData);
-          setFormData({
-            name: userData.name,
-            email: userData.email,
-            role: userData.role,
-          });
-          setUploadedCount(res.data.uploadedCount || 0);
-        }
+        const userData = res.data;
+        setUser(userData);
+        setFormData({
+          name: userData.name,
+          email: userData.email,
+          role: userData.role,
+        });
+        setUploadedCount(userData.uploadedCount || 0);
       } catch (err) {
-        console.error('Failed to load profile:', err);
-        setError('Failed to load profile. Please log in again.');
+        console.error('🚨 Failed to load profile:', err);
+        if (err.response && err.response.status === 403) {
+          setError('Session expired or invalid token. Please log in again.');
+          localStorage.removeItem('token');
+        } else {
+          setError('Failed to load profile. Please try again later.');
+        }
       } finally {
         setLoading(false);
       }
@@ -48,42 +50,43 @@ export default function Profile() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    window.location.href = '/';
+    window.location.href = '/login';
   };
 
   const handleSave = async () => {
     const token = localStorage.getItem('token');
+    if (!token) {
+      alert('No token found. Please login again.');
+      return;
+    }
+
     try {
       const res = await axios.put(
         'http://localhost:5000/api/auth/update-profile',
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       setUser(res.data.user);
       setEditing(false);
-
-      if (formData.role === 'artist') {
-        const res2 = await axios.get('http://localhost:5000/api/auth/profile', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUploadedCount(res2.data.uploadedCount || 0);
-      } else {
-        setUploadedCount(0);
-      }
+      alert('✅ Profile updated!');
     } catch (err) {
-      console.error('Failed to update profile:', err);
-      alert('Error updating profile.');
+      console.error('❌ Failed to update profile:', err);
+      alert('Error updating profile. Please try again.');
     }
   };
 
   if (loading) return <div className="loading">⏳ Loading profile...</div>;
-  if (error) return (
-    <div className="profile-container">
-      <style>{profileStyles}</style>
-      <div className="error">{error}</div>
-    </div>
-  );
+
+  if (error) {
+    return (
+      <div className="profile-container">
+        <style>{profileStyles}</style>
+        <div className="error">{error}</div>
+        <button className="logout-btn" onClick={handleLogout}>🔐 Go to Login</button>
+      </div>
+    );
+  }
+
   if (!user) return null;
 
   return (
@@ -148,18 +151,15 @@ const profileStyles = `
   border-radius: 25px;
   background: #000000;
 }
-
 .profile-container:hover {
   box-shadow: 0 12px 24px rgba(0, 255, 255, 0.25);
 }
-
 .profile-card {
   background: #2f3640;
   padding: 2rem;
   border-radius: 15px;
   box-shadow: 0 0 20px rgba(0,255,255,0.1);
 }
-
 .profile-card input, .profile-card select {
   padding: 10px;
   margin: 8px 0;
@@ -167,14 +167,12 @@ const profileStyles = `
   border-radius: 8px;
   border: 1px solid #ccc;
 }
-
 .title {
   font-size: 28px;
   margin-bottom: 1rem;
   color: #00fff7;
   text-shadow: 0 0 6px #00fff7;
 }
-
 .logout-btn, .edit-btn {
   margin-top: 1rem;
   padding: 10px 25px;
@@ -186,21 +184,17 @@ const profileStyles = `
   font-size: 16px;
   transition: background 0.3s ease;
 }
-
 .logout-btn:hover {
   background: rgb(194, 71, 22);
 }
 .edit-btn:hover {
   background: rgb(61, 132, 255);
 }
-
 .loading {
   font-size: 20px;
   color: #00a8ff;
   text-align: center;
 }
-
-/* Enhanced Error Styling */
 .error {
   font-size: 18px;
   color: #ff6b81;
@@ -216,7 +210,6 @@ const profileStyles = `
   box-shadow: 0 0 15px rgba(255, 107, 129, 0.4);
   animation: fadeInPop 0.4s ease-out;
 }
-
 @keyframes fadeInPop {
   0% {
     opacity: 0;

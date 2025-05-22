@@ -1,95 +1,139 @@
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import Button from 'react-bootstrap/Button';
+import { Link } from 'react-router-dom'; // Import Link for navigation
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Home() {
-
   return (
     <>
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6 text-center text-blue-900">Welcome to Yuvi's Artistry</h1>
+      <div className="home">
+        {/* Hero Section */}
+        <div className="hero-section text-center text-white py-20 px-4">
+          <h1 className="hero-title">Welcome to Yuvi's Artistry</h1>
+          <div className="button-group mt-10 flex justify-center gap-6 flex-wrap">
+            {/* Wrap Admin button with Link to navigate */}
+            <Link to="/login">
+              <Button className="neon-button blue">Admin</Button>
+            </Link>
+              <Link to="/login">
+            <Button className="neon-button green">Artist</Button>
+            </Link>
+            <Link to="/login">
+            <Button className="neon-button pink">Customer</Button>
+            </Link>
+          </div>
+        </div>
 
-        <Carousel
-          autoPlay
-          infiniteLoop
-          showThumbs={false}
-          showStatus={false}
-          className="mb-10"
-        >
-          {/* 🖼️ Custom static slides */}
-          <div>
-            <img src="/images/art1.jpg" alt="Art 1" className="h-[100px] w-90% object-cover rounded-xl shadow-lg" />
-            <p className="legend text-lg bg-opacity-70 bg-black text-white p-2">Art Title 1 - ₹999</p>
-          </div>
-          <div>
-            <img src="/images/art2.jpg" alt="Art 2" className="h-[100px] w-90% object-cover rounded-xl shadow-lg" />
-            <p className="legend text-lg bg-opacity-70 bg-black text-white p-2">Art Title 2 - ₹1499</p>
-          </div>
-          <div>
-            <img src="/images/art3.jpg" alt="Art 3" className="h-[100px] w-90% object-cover rounded-xl shadow-lg" />
-            <p className="legend text-lg bg-opacity-70 bg-black text-white p-2">Art Title 3 - ₹1999</p>
-          </div>
-          <div>
-            <img src="/images/art4.jpeg" alt="Art 4" className="h-[100px] w-90% object-cover rounded-xl shadow-lg" />
-            <p className="legend text-lg bg-opacity-70 bg-black text-white p-2">Art Title 4 - ₹2499</p>
-          </div>
-          <div>
-            <img src="/images/art5.jpeg" alt="Art 5" className="h-[100px] w-90% object-cover rounded-xl shadow-lg" />
-            <p className="legend text-lg bg-opacity-70 bg-black text-white p-2">Art Title 5 - ₹2999</p>
-          </div>
-        </Carousel>      
+        {/* Carousel Section */}
+        <div className="carousel-wrapper max-w-5xl mx-auto px-4 py-16">
+          <Carousel
+            autoPlay
+            infiniteLoop
+            showThumbs={false}
+            showStatus={false}
+            interval={3000}  // Set interval for autoPlay to 3 seconds (3000ms)
+            className="rounded-2xl overflow-hidden shadow-2xl"
+          >
+            {[ 
+              { src: "/images/art1.jpg", title: "Divine Strokes", price: "₹999" },
+              { src: "/images/art2.jpg", title: "Ethereal Flow", price: "₹1499" },
+              { src: "/images/art3.jpg", title: "Mystic Glow", price: "₹1999" },
+              { src: "/images/art4.jpeg", title: "Bold Harmony", price: "₹2499" },
+              { src: "/images/art5.jpeg", title: "Silent Symphony", price: "₹2999" },
+            ].map((art, index) => (
+              <div key={index}>
+                <img
+                  src={art.src}
+                  alt={art.title}
+                  className="carousel-img"
+                />
+                <p className="legend">{`${art.title} - ${art.price}`}</p>
+              </div>
+            ))}
+          </Carousel>
+        </div>
       </div>
 
+      {/* 🌌 Styles */}
       <style>{`
-
-      h1{
-      text-align:center;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-
-      }
-        .carousel .slide {
-          background-color: #f3f4f6;
-          width: 90%;
-          height: 76vh; /* Adjusted height for a more consistent view */
+        .home {
+          background-color: #0a0a0a;
+          font-family: 'Orbitron', sans-serif;
+          min-height: 100vh;
         }
 
-        .carousel .legend {
-          font-size: 1.25rem;
+        .hero-section {
+          background: radial-gradient(circle at 50% 50%,rgb(26, 26, 26) 0%,rgb(58, 144, 184) 100%);
+          border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .hero-title {
+          font-size: 2.5rem;
           font-weight: bold;
-          text-align: center;
-          background: rgba(0, 0, 0, 0.7);
-          color: white;
-          padding: 10px;
-          border-radius: 5px;
-          margin-top: 5%; /* Fixed typo: 'marigin-top' to 'margin-top' */
+          color:rgb(13, 14, 13);
+          text-shadow: 0 0 10px #00fff7, 0 0 20px #00ccff;
+          padding:1%;
         }
 
-        .carousel .thumb {
+        .neon-button {
+          padding: 12px 30px;
+          font-size: 1.1rem;
+          font-weight: 600;
+          border: 2px solid transparent;
           border-radius: 8px;
+          transition: all 0.4s ease;
+          background-color: transparent;
+          color: #fff;
+          letter-spacing: 1px;
+          margin:1%;
         }
 
-        /* Grid Image Hover Effect */
-        .grid img {
-          transition: transform 0.3s ease;
-          object-fit: cover; /* Ensures the image fills the container without distortion */
-          height: 90%; /* Ensures it fills the given height */
-        }
-
-        .grid img:hover {
+        .neon-button:hover {
           transform: scale(1.05);
+          background-color: #ff5ec722;
+          border-color: #ff5ec7;
+          box-shadow: 0 0 10px #ff5ec7, 0 0 20px #ff5ec7 inset;
         }
 
-        .button {
-          padding: 10px 20px;
-          background-color: #38b2ac;
-          color: white;
-          border-radius: 4px;
-          text-align: center;
+        .carousel-img {
+          height: 700px;
+          width: 100%;
+          object-fit: cover;
+          transition: all 0.4s ease-in-out;
+          margin-top:2%;
         }
 
-        .button:hover {
-          background-color: #319795;
+        .carousel-img:hover {
+          filter: brightness(1.1) saturate(1.2);
+          transform: scale(1.02);
+        }
+
+        .legend {
+          font-size: 1.4rem;
+          background: rgba(0, 0, 0, 0.7);
+          color: #ffffff;
+          padding: 12px 20px;
+          border-radius: 8px;
+          text-shadow: 0 0 5px #fff;
+          backdrop-filter: blur(5px);
+        }
+
+        @media (max-width: 768px) {
+          .hero-title {
+            font-size: 2.5rem;
+          }
+          .carousel-img {
+            height: 300px;
+          }
         }
       `}</style>
+
+      {/* Font Import */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap"
+        rel="stylesheet"
+      />
     </>
   );
 }

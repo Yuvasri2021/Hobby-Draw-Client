@@ -1,12 +1,11 @@
 // src/App.js
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { Login, Signup } from './pages/Forms';
+import Forms from './components/Forms';
 import Upload from './pages/Upload';
 import Gallery from './pages/Gallery';
 import ArtDetails from './pages/ArtDetails';
 import MyOrders from './pages/MyOrders';
 import CartPage from './pages/CartPage';
-import Navbar from './components/Navbar';
 import Profile from './pages/Profile';
 import EditArtwork from './pages/EditArtwork';
 import AdminDashboard from './pages/AdminDashboard';
@@ -18,7 +17,10 @@ import ArtworkPage from './components/ArtworkPage';
 import OrdersPage from './components/OrdersPage';
 import ArtistsPage from './components/ArtistsPage';
 import CustomersPage from './components/CustomersPage';
-
+import ErrorPage from './pages/ErrorPage';
+import AdminLogin from './pages/AdminLogin';
+import ArtistLogin from './pages/ArtistLogin';
+import CustomerLogin from './pages/CustomerLogin';
 
 
 function AppWrapper() {
@@ -29,13 +31,13 @@ function AppWrapper() {
 
   return (
     <>
-      {!shouldHideNavbar && <Navbar />}
+     
       <Routes>
         {/* Public Routes */}
+        <Route path="/login" element={<Forms />} />
+        <Route path="/signup" element={<Forms />} />
         <Route path="/" element={<Home />} />
         <Route path="/artgallery" element={<Gallery />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
         <Route path="/art/:id" element={<ArtDetails />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/profile" element={<Profile />} />
@@ -43,10 +45,14 @@ function AppWrapper() {
         <Route path="/whishlist" element={<Whishlist />} />
         <Route path="/not-authorized" element={<NotAuthorized />} />
         <Route path="/artworks" element={<ArtworkPage />} />
-        <Route path="/orders" element={<OrdersPage />} />
+        <Route path="/orders" element={<MyOrders />} />
         <Route path="/artists" element={<ArtistsPage />} />
         <Route path="/customers" element={<CustomersPage />} />
-
+         <Route path="/error" element={<ErrorPage />} />
+        <Route path="/" element={<h1>Welcome to Art App</h1>} />
+        <Route path="/login" element={<AdminLogin />} />
+        <Route path="/artist-login" element={<ArtistLogin />} />
+        <Route path="/customer-login" element={<CustomerLogin />} />
 
 
 

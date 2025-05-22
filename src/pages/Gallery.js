@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavouritesContext';
+import Header from '../components/Header';
+
 
 export default function Gallery() {
   const [artworks, setArtworks] = useState([]);
@@ -41,6 +43,11 @@ export default function Gallery() {
   };
 
   return (
+    <>
+     <div className="gallery-container">
+      <Header />
+      ...
+    </div>
     <div className="gallery-container">
       <style>{GalleryStyles}</style>
 
@@ -98,14 +105,12 @@ export default function Gallery() {
             <button onClick={() => handleBuyNow(art)} className="buy-button">
               🛒 Buy Now
             </button>
-
-            <Link to={`/edit/${art._id}`} className="edit-button">
-              ✏️
-            </Link>
+            
           </div>
         ))}
       </div>
     </div>
+    </>
   );
 }
 
@@ -116,10 +121,11 @@ const GalleryStyles = `
   }
 
   .gallery-container {
-    padding: 2rem;
-    max-width: 1400px;
-    margin: auto;
-    animation: fadeIn 1s ease;
+     padding: 2rem 4rem; /* More horizontal padding */
+  max-width: 100%; /* Use full width */
+  width: 100%;
+  margin: auto;
+  animation: fadeIn 1s ease;
   }
 
   .gallery-header {
@@ -164,8 +170,8 @@ const GalleryStyles = `
 
   .artwork-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 32px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Slightly bigger cards */
+    gap: 40px;
   }
 
   .artwork-card {
@@ -226,7 +232,7 @@ const GalleryStyles = `
   .fav-button {
     position: absolute;
     top: 1rem;
-    right: 3.5rem;
+    right: 1.5rem;
     background: transparent;
     border: none;
     font-size: 1.3rem;
@@ -264,30 +270,12 @@ const GalleryStyles = `
     border-radius: 30px;
     cursor: pointer;
     transition: background 0.4s ease;
-    margin-left:55%;
+    margin-left:45%;
   }
 
   .buy-button:hover {
     background: linear-gradient(135deg, #0984e3, #6c5ce7);
     transform: scale(1.05);
-  }
-
-  .edit-button {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: #ffeaa7;
-    padding: 8px 12px;
-    border-radius: 50%;
-    color: #2d3436;
-    font-weight: bold;
-    text-decoration: none;
-    font-size: 0.85rem;
-    transition: 0.3s ease;
-  }
-
-  .edit-button:hover {
-    background: #fab1a0;
   }
 
   @keyframes fadeUp {

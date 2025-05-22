@@ -52,20 +52,19 @@ export default function Wishlist() {
               <div className="price-tag">₹{art.price}</div>
 
               <button
-                className={`fav-button active`}
+                className="fav-button active"
                 onClick={() => toggleFavorite(art._id)}
               >
                 ❤️
               </button>
 
-                <h2 className="artwork-title">{art.title}</h2>
+              <h2 className="artwork-title">{art.title}</h2>
 
-              <p className="artwork-description">{art.description}
+              <p className="artwork-description">{art.description}</p>
 
               <button onClick={() => handleBuyNow(art)} className="buy-button">
                 🛒 Buy Now
               </button>
-              </p>
             </div>
           ))}
         </div>
@@ -79,12 +78,14 @@ body {
   background-color: black;
   color: white;
   font-family: 'Segoe UI', sans-serif;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0;
 }
 
 .gallery-container {
   padding: 2rem;
-  max-width: 1400px;
-  margin: auto;
 }
 
 .gallery-header {
@@ -181,7 +182,7 @@ body {
 .artwork-description {
   font-size: 0.95rem;
   color: #ccc;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .buy-button {
@@ -193,7 +194,9 @@ body {
   border-radius: 30px;
   cursor: pointer;
   transition: background 0.3s;
-  margin-left:55%;
+  display: block;
+  margin: 0 auto;
+  margin-top: 10px;
 }
 
 .buy-button:hover {

@@ -15,7 +15,14 @@ export default function CartPage() {
 
   const handlePlaceOrder = async () => {
     if (!cartItems || cartItems.length === 0) {
-      setOrderMessage('Cart is empty or not loaded properly.');
+      setOrderMessage('🛒 Cart is empty or not loaded properly.');
+      return;
+    }
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      setOrderMessage('❌ You must be logged in to place an order.');
       return;
     }
 
@@ -29,7 +36,7 @@ export default function CartPage() {
         { items },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -37,13 +44,13 @@ export default function CartPage() {
       clearCart();
       setTimeout(() => navigate('/my-orders'), 1000);
     } catch (err) {
+      console.error("Order Error:", err);
       setOrderMessage(`❌ Order failed: ${err.response?.data?.message || 'Server error'}`);
     }
   };
 
   return (
     <div className={`min-h-screen p-6 bg-black text-white relative overflow-hidden ${fadeIn ? 'fade-in' : ''}`}>
-      {/* Particle Background */}
       <div className="particle-bg absolute top-0 left-0 w-full h-full -z-10"></div>
 
       <h1 className="text-4xl font-extrabold text-center mb-8 bg-gradient-to-r from-cyan-400 via-gray-500 to-aqua-500 text-transparent bg-clip-text animate-gradient" style={{textAlign:'center',color:' #2d3436',
@@ -91,27 +98,22 @@ export default function CartPage() {
 
           <div className="total-bar flex justify-between items-center mt-8 p-4 rounded-xl bg-white/10 border border-cyan-600/40 shadow-lg backdrop-blur">
             <h3 className="text-lg font-bold text-cyan-300">Total:
-            <span className="text-lg font-semibold text-gray-100">
-              ₹{cartItems.reduce((acc, curr) => acc + parseFloat(curr.price), 0).toFixed(2)}
-            </span></h3>
-         
+              <span className="text-lg font-semibold text-gray-100">
+                ₹{cartItems.reduce((acc, curr) => acc + parseFloat(curr.price), 0).toFixed(2)}
+              </span>
+            </h3>
 
-          <button
-            onClick={handlePlaceOrder}
-            className="place-order-btn w-full mt-5 py-3 text-white font-semibold rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105"
-          >
-            🚀 Place Order
-          </button>
+            <button
+              onClick={handlePlaceOrder}
+              className="place-order-btn w-full mt-5 py-3 text-white font-semibold rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105"
+            >
+              🚀 Place Order
+            </button>
           </div>
         </div>
       )}
 
-      {/* 🌟 Custom CSS */}
       <style>{`
-        body {
-          background: black;
-        }
-
         .fade-in {
           animation: fadeIn 1s ease-in;
         }
@@ -145,8 +147,7 @@ export default function CartPage() {
           50% { transform: scale(1.02); }
         }
 
-        .cart-item-card
-       {
+        .cart-item-card {
           background: rgba(255, 255, 255, 0.1);
           backdrop-filter: blur(20px);
           border-radius: 10px;
@@ -164,39 +165,34 @@ export default function CartPage() {
           transform: translateY(-4px) scale(1.02);
         }
 
-        .cart-item-card img {
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
         .cart-item-card img:hover {
           transform: scale(1.05);
           box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
         }
 
-        .total-bar{
+        .total-bar {
           transform: scale(1.01);
-          color:white;
-            border:1px solid black;
-        margin-top:2%;
-        margin-left:3%;
-        margin-right:88%;
-        padding:1%;
-        background:rgba(255, 255, 255, 0.15);
+          color: white;
+          border: 1px solid black;
+          margin-top: 2%;
+          margin-left: 3%;
+          margin-right: 88%;
+          padding: 1%;
+          background: rgba(255, 255, 255, 0.15);
         }
 
-        .total-bar:hover{
-         border: 2px solid rgba(0, 255, 255, 0.4);
+        .total-bar:hover {
+          border: 2px solid rgba(0, 255, 255, 0.4);
           box-shadow: 0 0 10px rgba(0, 255, 255, 0.3), 0 0 20px rgba(0, 255, 255, 0.2);
           transform: translateY(-4px) scale(1.02);
-          }
+        }
 
         .place-order-btn {
           position: relative;
           overflow: hidden;
-          margin-left:15%;
+          margin-left: 15%;
         }
 
-        
         .place-order-btn::before {
           content: "";
           position: absolute;
@@ -217,15 +213,10 @@ export default function CartPage() {
         .place-order-btn:hover::before {
           left: 130%;
         }
-       
-        .place-order-btn:hover::hover{
-          border: 2px solid rgba(0, 255, 255, 0.4);
-          box-shadow: 0 0 10px rgba(0, 255, 255, 0.3), 0 0 20px rgba(0, 255, 255, 0.2);
-          transform: translateY(-4px) scale(1.02);
-        }
 
         h1 {
           text-shadow: 0 0 5px cyan, 0 0 10px blue, 0 0 20px purple;
+          padding-top: 5%;
         }
 
         .cart-item-card,
