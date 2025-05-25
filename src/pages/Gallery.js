@@ -6,16 +6,21 @@ import { useCart } from '../context/CartContext';
 import { useFavorites } from '../context/FavouritesContext';
 import Header from '../components/Header';
 
-
 export default function Gallery() {
   const [artworks, setArtworks] = useState([]);
   const [search, setSearch] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
+  const [userRole, setUserRole] = useState(''); // artist or customer
 
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { favorites, toggleFavorite } = useFavorites();
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem('role');
+    setUserRole(storedRole);
+  }, []);
 
   const fetchArtworks = async () => {
     try {
@@ -44,72 +49,79 @@ export default function Gallery() {
 
   return (
     <>
-     <div className="gallery-container">
-      <Header />
-      ...
-    </div>
-    <div className="gallery-container">
-      <style>{GalleryStyles}</style>
-
-      <h1 className="gallery-header">🎨 Art Gallery</h1>
-
-      <form onSubmit={handleFilter} className="filter-form">
-        <input
-          type="text"
-          placeholder="Search by title"
-          className="filter-input"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Min Price"
-          className="filter-input"
-          value={minPrice}
-          onChange={(e) => setMinPrice(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Max Price"
-          className="filter-input"
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(e.target.value)}
-        />
-        <button type="submit" className="filter-button">Filter</button>
-      </form>
-
-      <div className="artwork-grid">
-        {artworks.map((art) => (
-          <div key={art._id} className="artwork-card">
-            <div className="image-wrapper">
-              <img
-                src={`http://localhost:5000${art.imageUrl}`}
-                alt={art.title}
-                className="artwork-image"
-              />
-            </div>
-
-            <div className="price-tag">₹{art.price}</div>
-
-            <button
-              className={`fav-button ${favorites[art._id] ? 'active' : ''}`}
-              onClick={() => toggleFavorite(art._id)}
-            >
-              {favorites[art._id] ? '❤️' : '🤍'}
-            </button>
-
-              <h2 className="artwork-title" >{art.title}</h2>
-
-            <p className="artwork-description">{art.description}</p>
-            
-            <button onClick={() => handleBuyNow(art)} className="buy-button">
-              🛒 Buy Now
-            </button>
-            
-          </div>
-        ))}
+      <div className="gallery-container">
+        <Header />
       </div>
-    </div>
+      <div className="gallery-container">
+        <style>{GalleryStyles}</style>
+
+        <h1 className="gallery-header">🎨 Art Gallery</h1>
+
+        <form onSubmit={handleFilter} className="filter-form">
+          <input
+            type="text"
+            placeholder="Search by title"
+            className="filter-input"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <input
+            type="number"
+            placeholder="Min Price"
+            className="filter-input"
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
+          />
+          <input
+            type="number"
+            placeholder="Max Price"
+            className="filter-input"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+          />
+          <button type="submit" className="filter-button">Filter</button>
+        </form>
+
+        <div className="artwork-grid">
+          {artworks.map((art) => (
+            <div key={art._id} className="artwork-card">
+              <div className="image-wrapper">
+                <img
+                  src={`http://localhost:5000${art.imageUrl}`}
+                  alt={art.title}
+                  className="artwork-image"
+                />
+              </div>
+
+              <div className="price-tag">₹{art.price}</div>
+
+              {userRole === 'customer' && (
+                <button
+                  className={`fav-button ${favorites[art._id] ? 'active' : ''}`}
+                  onClick={() => toggleFavorite(art._id)}
+                >
+                  {favorites[art._id] ? '❤️' : '🤍'}
+                </button>
+              )}
+
+              <h2 className="artwork-title">{art.title}</h2>
+              <p className="artwork-description">{art.description}</p>
+
+              {userRole === 'customer' && (
+                <button onClick={() => handleBuyNow(art)} className="buy-button">
+                  🛒 Buy Now
+                </button>
+              )}
+
+              {userRole === 'artist' && (
+                <>
+              <Link to={`/edit/${art._id}`} className="edit-button">✏️</Link>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     </>
   );
 }
@@ -121,11 +133,11 @@ const GalleryStyles = `
   }
 
   .gallery-container {
-     padding: 2rem 4rem; /* More horizontal padding */
-  max-width: 100%; /* Use full width */
-  width: 100%;
-  margin: auto;
-  animation: fadeIn 1s ease;
+    padding: 2rem 4rem;
+    max-width: 100%;
+    width: 100%;
+    margin: auto;
+    animation: fadeIn 1s ease;
   }
 
   .gallery-header {
@@ -170,7 +182,7 @@ const GalleryStyles = `
 
   .artwork-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Slightly bigger cards */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 40px;
   }
 
@@ -249,7 +261,6 @@ const GalleryStyles = `
     margin: 1rem 0 0.5rem;
     color:rgb(164, 175, 178);
     font-weight: 700;
-    text-decoration: none;
   }
 
   .artwork-description {
@@ -270,12 +281,39 @@ const GalleryStyles = `
     border-radius: 30px;
     cursor: pointer;
     transition: background 0.4s ease;
-    margin-left:45%;
+    margin-left: 45%;
   }
 
   .buy-button:hover {
     background: linear-gradient(135deg, #0984e3, #6c5ce7);
     transform: scale(1.05);
+  }
+
+  .edit-button {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 85%;
+    transform: translateX(-50%);
+    background: #fdcb6e;
+    padding: 10px 20px;
+    border-radius: 30px;
+    color: black;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.3s ease;
+    margin-bottom: 105%;
+  }
+
+  .edit-button:hover {
+    background: #e17055;
+  }
+
+  .amount-label {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 1.1rem;
+    color: white;
   }
 
   @keyframes fadeUp {
@@ -293,4 +331,4 @@ const GalleryStyles = `
     0% { opacity: 0; transform: scale(0.95); }
     100% { opacity: 1; transform: scale(1); }
   }
-`;
+`

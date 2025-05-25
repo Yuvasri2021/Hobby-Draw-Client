@@ -42,6 +42,7 @@ function AppWrapper() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/edit/:id" element={<EditArtwork />} />
         <Route path="/whishlist" element={<Whishlist />} />
         <Route path="/not-authorized" element={<NotAuthorized />} />
         <Route path="/artworks" element={<ArtworkPage />} />

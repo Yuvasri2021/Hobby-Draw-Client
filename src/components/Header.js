@@ -1,9 +1,42 @@
-// src/components/Header.js
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { FaShoppingCart, FaHeart, FaUser, FaBoxOpen, FaHome } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import {
+  FaShoppingCart,
+  FaHeart,
+  FaUser,
+  FaBoxOpen,
+  FaHome,
+  FaUpload,
+  FaImages,
+  FaSignInAlt,
+  FaUserPlus
+} from 'react-icons/fa';
 
 export default function Header() {
+  const location = useLocation();
+  const [role, setRole] = useState(null);
+
+  useEffect(() => {
+    try {
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        const parsedUser = JSON.parse(userData);
+        setRole(parsedUser.role); // 'customer' or 'artist'
+      } else {
+        setRole(null);
+      }
+    } catch (err) {
+      console.error('Invalid user data in localStorage:', err);
+      setRole(null);
+    }
+  }, []);
+
+  // Detect if current page is gallery (include paths starting with /gallery)
+  const isGalleryPage = location.pathname.startsWith('/gallery');
+
+  // Show login/signup only if not logged in AND not on gallery page
+  const showAuthLinks = !role && !isGalleryPage;
+
   return (
     <header className="header">
       <style>{headerStyles}</style>
@@ -15,19 +48,60 @@ export default function Header() {
 
       <nav className="nav-links">
         <Link to="/" className="nav-link">Home</Link>
-        <Link to="/cart" className="nav-link">
-          <FaShoppingCart className="icon" /> Cart
-        </Link>
-        <Link to="/whishlist" className="nav-link">
-          <FaHeart className="icon" /> Wishlist
-        </Link>
-        <Link to="/orders" className="nav-link">
-          <FaBoxOpen className="icon" /> Orders
-        </Link>
-        <Link to="/profile" className="nav-link">
-          <FaUser className="icon" /> Profile
-        </Link>
+
+        {role === 'customer' && (
+          <>
+            <div className="nav-header">Customer Menu</div>
+            <Link to="/cart" className="nav-link">
+              <FaShoppingCart className="icon" /> Cart
+            </Link>
+            <Link to="/whishlist" className="nav-link">
+              <FaHeart className="icon" /> Wishlist
+            </Link>
+            <Link to="/orders" className="nav-link">
+              <FaBoxOpen className="icon" /> Orders
+            </Link>
+            <Link to="/profile" className="nav-link">
+              <FaUser className="icon" /> Profile
+            </Link>
+          </>
+        )}
+
+        {role === 'artist' && (
+          <>
+            <div className="nav-header">Artist Menu</div>
+            <Link to="/upload" className="nav-link">
+              <FaUpload className="icon" /> Upload
+            </Link>
+            <Link to="/gallery" className="nav-link">
+              <FaImages className="icon" /> Gallery
+            </Link>
+            <Link to="/orders" className="nav-link">
+              <FaBoxOpen className="icon" /> Orders
+            </Link>
+            <Link to="/profile" className="nav-link">
+              <FaUser className="icon" /> Profile
+            </Link>
+          </>
+        )}
+
+        {showAuthLinks && (
+          <>
+            <Link to="/login" className="nav-link">
+              <FaSignInAlt className="icon" /> Login
+            </Link>
+            <Link to="/signup" className="nav-link">
+              <FaUserPlus className="icon" /> Signup
+            </Link>
+          </>
+        )}
       </nav>
+
+      {role && (
+        <div className="user-info">
+          {role === 'artist' ? '🎨 Artist' : '🛍 Customer'}
+        </div>
+      )}
     </header>
   );
 }
@@ -64,6 +138,15 @@ const headerStyles = `
     align-items: center;
   }
 
+  .nav-header {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #81ecec;
+    margin-right: 1rem;
+    padding-bottom: 0.1rem;
+    border-bottom: 1px solid #81ecec;
+  }
+
   .nav-link {
     display: flex;
     align-items: center;
@@ -80,5 +163,12 @@ const headerStyles = `
 
   .icon {
     font-size: 1.2rem;
+  }
+
+  .user-info {
+    color: #ffeaa7;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-left: 1rem;
   }
 `;

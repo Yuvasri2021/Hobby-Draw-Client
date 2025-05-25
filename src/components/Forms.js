@@ -45,7 +45,7 @@ export default function Forms({ requiredRole }) {
       if (userRole === 'admin') {
         navigate('/admin');
       } else if (userRole === 'artist') {
-        navigate('/upload');
+        navigate('/artgallery');
       } else if (userRole === 'customer') {
         navigate('/artgallery');
       } else {
